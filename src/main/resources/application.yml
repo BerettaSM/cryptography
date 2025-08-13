@@ -1,7 +1,14 @@
 spring:
     application:
         name: cryptography
+    docker:
+        compose:
+            lifecycle-management: none
     jpa:
         open-in-view: false
+    liquibase:
+        change-log: classpath:/db/changelog/db.changelog-master.xml
+        contexts: base
+        enabled: true
     profiles:
         active: ${APP_PROFILE:dev} 

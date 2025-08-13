@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+                            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <changeSet id="1" author="ramon">
+        <createTable tableName="TBL_TRANSFER" remarks="A table to persist transfers.">
+            <column name="ID" type="BIGINT" >
+                <constraints
+                    primaryKey="true"
+                />
+            </column>
+            <column name="USER_DOCUMENT" type="TEXT" >
+                <constraints
+                    nullable="false"
+                />
+            </column>
+            <column name="CREDIT_CARD_TOKEN" type="TEXT">
+                <constraints
+                    nullable="false"
+                />
+            </column>
+            <column name="VALUE" type="BIGINT">
+                <constraints
+                    nullable="false"
+                />
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>
