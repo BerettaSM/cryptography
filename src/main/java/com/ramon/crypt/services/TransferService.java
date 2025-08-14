@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ramon.crypt.domain.dto.TransferDTO;
+import com.ramon.crypt.domain.entities.Transfer;
 import com.ramon.crypt.repositories.TransferRepository;
 import com.ramon.crypt.services.exceptions.ResourceNotFoundException;
 
@@ -29,6 +30,13 @@ public class TransferService {
         return transferRepository.findById(id)
             .map(TransferDTO::from)
             .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Transactional
+    public TransferDTO save(TransferDTO dto) {
+        Transfer transfer = dto.toEntity();
+        Transfer saved = transferRepository.save(transfer);
+        return TransferDTO.from(saved);
     }
     
 }
