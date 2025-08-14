@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +27,12 @@ public class TransferController {
     public ResponseEntity<Page<TransferDTO>> findAll(Pageable pageable) {
         Page<TransferDTO> transfers = transferService.findAll(pageable);
         return ResponseEntity.ok(transfers);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TransferDTO> findById(@PathVariable Long id) {
+        TransferDTO transfer = transferService.findById(id);
+        return ResponseEntity.ok(transfer);
     }
     
 }
