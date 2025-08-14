@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "crypt.secret.password",
+    "type": "java.lang.String",
+    "description": "A password used to generate the asymmetric keys."
+  },
+  {
+    "name": "crypt.secret.salt",
+    "type": "java.lang.String",
+    "description": "A salt used to generate the asymmetric keys."
+  }
+]}

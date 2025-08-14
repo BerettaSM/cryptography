@@ -12,3 +12,8 @@ spring:
         enabled: true
     profiles:
         active: ${APP_PROFILE:dev} 
+
+crypt:
+    secret:
+        password: ${CRYPT_PASSWORD:mypassword}
+        salt: ${CRYPT_PASSWORD:mysalt}
