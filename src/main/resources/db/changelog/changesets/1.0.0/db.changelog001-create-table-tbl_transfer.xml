@@ -7,7 +7,7 @@
 
     <changeSet id="1" author="ramon">
         <createTable tableName="TBL_TRANSFER" remarks="A table to persist transfers.">
-            <column name="ID" type="BIGINT" >
+            <column name="ID" type="BIGINT" autoIncrement="true">
                 <constraints
                     primaryKey="true"
                 />
