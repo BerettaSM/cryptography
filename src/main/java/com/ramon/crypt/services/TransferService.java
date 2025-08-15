@@ -18,23 +18,27 @@ import lombok.RequiredArgsConstructor;
 public class TransferService {
 
     private final TransferRepository transferRepository;
+    private final SensitiveDataService sensitiveDataService;
 
     @Transactional(readOnly = true)
     public Page<TransferDTO> findAll(Pageable pageable) {
         return transferRepository.findAll(pageable)
-            .map(TransferDTO::from);
+            .map(TransferDTO::from)
+            .map(sensitiveDataService::decrypt);
     }
 
     @Transactional(readOnly = true)
     public TransferDTO findById(Long id) {
         return transferRepository.findById(id)
             .map(TransferDTO::from)
+            .map(sensitiveDataService::decrypt)
             .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional
     public TransferDTO save(TransferDTO dto) {
-        Transfer transfer = dto.toEntity();
+        TransferDTO encryptedDto = sensitiveDataService.encrypt(dto);
+        Transfer transfer = encryptedDto.toEntity();
         Transfer saved = transferRepository.save(transfer);
         return TransferDTO.from(saved);
     }

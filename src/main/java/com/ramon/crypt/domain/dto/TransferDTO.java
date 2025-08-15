@@ -1,6 +1,7 @@
 package com.ramon.crypt.domain.dto;
 
 import com.ramon.crypt.domain.entities.Transfer;
+import com.ramon.crypt.services.annotations.SensitiveData;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,8 +13,13 @@ import lombok.NoArgsConstructor;
 public class TransferDTO {
 
     private Long id;
+    
+    @SensitiveData
     private String userDocument;
+    
+    @SensitiveData
     private String creditCardToken;
+    
     private Long value;
 
     public TransferDTO(Transfer entity) {
