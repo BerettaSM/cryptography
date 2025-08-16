@@ -14,6 +14,7 @@ import com.ramon.crypt.domain.entities.Transfer;
 import com.ramon.crypt.repositories.TransferRepository;
 import com.ramon.crypt.services.exceptions.DatabaseException;
 import com.ramon.crypt.services.exceptions.ResourceNotFoundException;
+import com.ramon.crypt.util.PatchUtils;
 
 import lombok.RequiredArgsConstructor;
 
@@ -27,16 +28,16 @@ public class TransferService {
     @Transactional(readOnly = true)
     public Page<TransferDTO> findAll(Pageable pageable) {
         return transferRepository.findAll(pageable)
-            .map(TransferDTO::from)
-            .map(sensitiveDataService::decrypt);
+                .map(TransferDTO::from)
+                .map(sensitiveDataService::decrypt);
     }
 
     @Transactional(readOnly = true)
     public TransferDTO findById(Long id) {
         return transferRepository.findById(id)
-            .map(TransferDTO::from)
-            .map(sensitiveDataService::decrypt)
-            .orElseThrow(ResourceNotFoundException::new);
+                .map(TransferDTO::from)
+                .map(sensitiveDataService::decrypt)
+                .orElseThrow(ResourceNotFoundException::new);
     }
 
     @Transactional
@@ -45,12 +46,23 @@ public class TransferService {
         Transfer transfer = encryptedDto.toEntity();
         try {
             Transfer saved = transferRepository.save(transfer);
-            encryptedDto = TransferDTO.from(saved);
-            return sensitiveDataService.decrypt(encryptedDto);
+            return sensitiveDataService.decrypt(TransferDTO.from(saved));
         }
         catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database constraint violation.", HttpStatus.BAD_REQUEST);
         }
+    }
+
+    @Transactional
+    public TransferDTO update(Long id, TransferDTO dto) {
+        if (!transferRepository.existsById(id)) {
+            throw new ResourceNotFoundException();
+        }
+        Transfer transferUpdate = sensitiveDataService.encrypt(dto).toEntity();
+        Transfer transfer = transferRepository.getReferenceById(id);
+        PatchUtils.applyPartialUpdate(transferUpdate, transfer);
+        Transfer saved = transferRepository.save(transfer);
+        return sensitiveDataService.decrypt(TransferDTO.from(saved));
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -65,5 +77,5 @@ public class TransferService {
             throw new DatabaseException(e, HttpStatus.CONFLICT);
         }
     }
-    
+
 }

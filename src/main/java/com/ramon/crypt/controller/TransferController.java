@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,9 +45,17 @@ public class TransferController {
     public ResponseEntity<TransferDTO> save(@RequestBody TransferDTO dto) {
         TransferDTO saved = transferService.save(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-            .path("/{id}")
-            .build(saved.getId());
+                .path("/{id}")
+                .build(saved.getId());
         return ResponseEntity.created(location).body(saved);
+    }
+
+    @PatchMapping(path = "/{id}")
+    public ResponseEntity<TransferDTO> putMethodName(
+            @PathVariable Long id,
+            @RequestBody TransferDTO dto) {
+        TransferDTO updated = transferService.update(id, dto);
+        return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping(path = "/{id}")
@@ -54,5 +63,5 @@ public class TransferController {
         transferService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-    
+
 }
