@@ -44,7 +44,8 @@ public class TransferService {
         TransferDTO encryptedDto = sensitiveDataService.encrypt(dto);
         Transfer transfer = encryptedDto.toEntity();
         Transfer saved = transferRepository.save(transfer);
-        return TransferDTO.from(saved);
+        encryptedDto = TransferDTO.from(saved);
+        return sensitiveDataService.decrypt(encryptedDto);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
