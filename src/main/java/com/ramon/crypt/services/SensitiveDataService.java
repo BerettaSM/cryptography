@@ -27,11 +27,15 @@ public class SensitiveDataService {
 
     private <T> T process(T object, UnaryOperator<String> transform) {
         var wrapped = new BeanWrapperImpl(object);
-        for (Field field: object.getClass().getDeclaredFields()) {
+        for (Field field : object.getClass().getDeclaredFields()) {
             if (field.isAnnotationPresent(SensitiveData.class)) {
-                String fieldName = field.getName();
-                if (!(wrapped.getPropertyValue(fieldName) instanceof String fieldValue)) {
+                if (!String.class.isAssignableFrom(field.getType())) {
                     throw new RuntimeException("Only String fields can be encrypted/decrypted.");
+                }
+                String fieldName = field.getName();
+                String fieldValue = (String) wrapped.getPropertyValue(fieldName);
+                if (fieldValue == null) {
+                    continue;
                 }
                 String processedValue = transform.apply(fieldValue);
                 wrapped.setPropertyValue(fieldName, processedValue);
