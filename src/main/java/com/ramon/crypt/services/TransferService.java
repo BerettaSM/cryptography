@@ -43,9 +43,14 @@ public class TransferService {
     public TransferDTO save(TransferDTO dto) {
         TransferDTO encryptedDto = sensitiveDataService.encrypt(dto);
         Transfer transfer = encryptedDto.toEntity();
-        Transfer saved = transferRepository.save(transfer);
-        encryptedDto = TransferDTO.from(saved);
-        return sensitiveDataService.decrypt(encryptedDto);
+        try {
+            Transfer saved = transferRepository.save(transfer);
+            encryptedDto = TransferDTO.from(saved);
+            return sensitiveDataService.decrypt(encryptedDto);
+        }
+        catch (DataIntegrityViolationException e) {
+            throw new DatabaseException("Database constraint violation.", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
