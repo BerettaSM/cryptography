@@ -1,14 +1,18 @@
 package com.ramon.crypt.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.ramon.crypt.domain.dto.TransferDTO;
 import com.ramon.crypt.domain.entities.Transfer;
 import com.ramon.crypt.repositories.TransferRepository;
+import com.ramon.crypt.services.exceptions.DatabaseException;
 import com.ramon.crypt.services.exceptions.ResourceNotFoundException;
 
 import lombok.RequiredArgsConstructor;
@@ -41,6 +45,19 @@ public class TransferService {
         Transfer transfer = encryptedDto.toEntity();
         Transfer saved = transferRepository.save(transfer);
         return TransferDTO.from(saved);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS)
+    public void deleteById(Long id) {
+        if (!transferRepository.existsById(id)) {
+            throw new ResourceNotFoundException();
+        }
+        try {
+            transferRepository.deleteById(id);
+        }
+        catch (DataIntegrityViolationException e) {
+            throw new DatabaseException(e, HttpStatus.CONFLICT);
+        }
     }
     
 }
