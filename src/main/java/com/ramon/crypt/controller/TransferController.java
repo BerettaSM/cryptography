@@ -56,7 +56,7 @@ public class TransferController {
     }
 
     @PatchMapping(path = "/{id}")
-    public ResponseEntity<TransferDTO> putMethodName(
+    public ResponseEntity<TransferDTO> update(
             @PathVariable Long id,
             @Valid @RequestBody TransferDTO dto) {
         TransferDTO updated = transferService.update(id, dto);

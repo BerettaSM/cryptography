@@ -29,15 +29,13 @@ public class TransferService {
     @Transactional(readOnly = true)
     public Page<TransferDTO> findAll(Pageable pageable) {
         return transferRepository.findAll(pageable)
-                .map(TransferDTO::from)
-                .map(sensitiveDataService::decrypt);
+                .map(TransferDTO::from);
     }
 
     @Transactional(readOnly = true)
     public TransferDTO findById(Long id) {
         return transferRepository.findById(id)
                 .map(TransferDTO::from)
-                .map(sensitiveDataService::decrypt)
                 .orElseThrow(ResourceNotFoundException::new);
     }
 
@@ -47,7 +45,7 @@ public class TransferService {
         Transfer transfer = encryptedDto.toEntity();
         try {
             Transfer saved = transferRepository.save(transfer);
-            return sensitiveDataService.decrypt(TransferDTO.from(saved));
+            return TransferDTO.from(saved);
         }
         catch (DataIntegrityViolationException e) {
             throw new DatabaseException("Database constraint violation.", HttpStatus.BAD_REQUEST);
@@ -64,7 +62,7 @@ public class TransferService {
         Transfer transfer = transferRepository.getReferenceById(id);
         PatchUtils.applyPartialUpdate(transferUpdate, transfer);
         Transfer saved = transferRepository.save(transfer);
-        return sensitiveDataService.decrypt(TransferDTO.from(saved));
+        return TransferDTO.from(saved);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
