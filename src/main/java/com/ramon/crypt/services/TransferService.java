@@ -14,6 +14,7 @@ import com.ramon.crypt.domain.entities.Transfer;
 import com.ramon.crypt.repositories.TransferRepository;
 import com.ramon.crypt.services.exceptions.DatabaseException;
 import com.ramon.crypt.services.exceptions.ResourceNotFoundException;
+import com.ramon.crypt.util.CPFUtils;
 import com.ramon.crypt.util.PatchUtils;
 
 import lombok.RequiredArgsConstructor;
@@ -58,6 +59,7 @@ public class TransferService {
         if (!transferRepository.existsById(id)) {
             throw new ResourceNotFoundException();
         }
+        dto.setUserDocument(CPFUtils.standardize(dto.getUserDocument()));
         Transfer transferUpdate = sensitiveDataService.encrypt(dto).toEntity();
         Transfer transfer = transferRepository.getReferenceById(id);
         PatchUtils.applyPartialUpdate(transferUpdate, transfer);

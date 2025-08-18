@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -19,7 +20,10 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.ramon.crypt.domain.dto.TransferDTO;
 import com.ramon.crypt.services.TransferService;
+import com.ramon.crypt.validation.groups.PostGroup;
 
+import jakarta.validation.Valid;
+import jakarta.validation.groups.Default;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -42,7 +46,8 @@ public class TransferController {
     }
 
     @PostMapping
-    public ResponseEntity<TransferDTO> save(@RequestBody TransferDTO dto) {
+    public ResponseEntity<TransferDTO> save(
+            @Validated({ Default.class, PostGroup.class }) @RequestBody TransferDTO dto) {
         TransferDTO saved = transferService.save(dto);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -53,7 +58,7 @@ public class TransferController {
     @PatchMapping(path = "/{id}")
     public ResponseEntity<TransferDTO> putMethodName(
             @PathVariable Long id,
-            @RequestBody TransferDTO dto) {
+            @Valid @RequestBody TransferDTO dto) {
         TransferDTO updated = transferService.update(id, dto);
         return ResponseEntity.ok(updated);
     }
