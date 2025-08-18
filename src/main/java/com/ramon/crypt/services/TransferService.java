@@ -33,10 +33,21 @@ public class TransferService {
     }
 
     @Transactional(readOnly = true)
+    public Page<TransferDTO> findAllDecrypted(Pageable pageable) {
+        return findAll(pageable)
+                .map(sensitiveDataService::decrypt);
+    }
+
+    @Transactional(readOnly = true)
     public TransferDTO findById(Long id) {
         return transferRepository.findById(id)
                 .map(TransferDTO::from)
                 .orElseThrow(ResourceNotFoundException::new);
+    }
+
+    @Transactional(readOnly = true)
+    public TransferDTO findByIdDecrypted(Long id) {
+        return sensitiveDataService.decrypt(findById(id));
     }
 
     @Transactional
@@ -53,6 +64,11 @@ public class TransferService {
     }
 
     @Transactional
+    public TransferDTO saveDecrypted(TransferDTO dto) {
+        return sensitiveDataService.decrypt(save(dto));
+    }
+
+    @Transactional
     public TransferDTO update(Long id, TransferDTO dto) {
         if (!transferRepository.existsById(id)) {
             throw new ResourceNotFoundException();
@@ -63,6 +79,11 @@ public class TransferService {
         PatchUtils.applyPartialUpdate(transferUpdate, transfer);
         Transfer saved = transferRepository.save(transfer);
         return TransferDTO.from(saved);
+    }
+
+    @Transactional
+    public TransferDTO updateDecrypted(Long id, TransferDTO dto) {
+        return sensitiveDataService.decrypt(update(id, dto));
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)

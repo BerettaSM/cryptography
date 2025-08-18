@@ -39,9 +39,21 @@ public class TransferController {
         return ResponseEntity.ok(transfers);
     }
 
+    @GetMapping(path = "/decrypted")
+    public ResponseEntity<Page<TransferDTO>> findAllDecrypted(Pageable pageable) {
+        Page<TransferDTO> transfers = transferService.findAllDecrypted(pageable);
+        return ResponseEntity.ok(transfers);
+    }
+
     @GetMapping(path = "/{id}")
     public ResponseEntity<TransferDTO> findById(@PathVariable Long id) {
         TransferDTO transfer = transferService.findById(id);
+        return ResponseEntity.ok(transfer);
+    }
+
+    @GetMapping(path = "/{id}/decrypted")
+    public ResponseEntity<TransferDTO> findByIdDecrypted(@PathVariable Long id) {
+        TransferDTO transfer = transferService.findByIdDecrypted(id);
         return ResponseEntity.ok(transfer);
     }
 
@@ -55,11 +67,29 @@ public class TransferController {
         return ResponseEntity.created(location).body(saved);
     }
 
+    @PostMapping(path = "/decrypted")
+    public ResponseEntity<TransferDTO> saveDecrypted(
+            @Validated({ Default.class, PostGroup.class }) @RequestBody TransferDTO dto) {
+        TransferDTO saved = transferService.saveDecrypted(dto);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .build(saved.getId());
+        return ResponseEntity.created(location).body(saved);
+    }
+
     @PatchMapping(path = "/{id}")
     public ResponseEntity<TransferDTO> update(
             @PathVariable Long id,
             @Valid @RequestBody TransferDTO dto) {
         TransferDTO updated = transferService.update(id, dto);
+        return ResponseEntity.ok(updated);
+    }
+
+    @PatchMapping(path = "/{id}/decrypted")
+    public ResponseEntity<TransferDTO> updateDecrypted(
+            @PathVariable Long id,
+            @Valid @RequestBody TransferDTO dto) {
+        TransferDTO updated = transferService.updateDecrypted(id, dto);
         return ResponseEntity.ok(updated);
     }
 
