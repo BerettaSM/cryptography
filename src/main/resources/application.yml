@@ -4,6 +4,9 @@ spring:
     docker:
         compose:
             lifecycle-management: none
+    h2:
+        console:
+            enabled: false
     jpa:
         open-in-view: false
     liquibase:

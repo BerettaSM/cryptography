@@ -1,0 +1,13 @@
+spring:
+    datasource:
+        url: jdbc:postgresql://postgres:5432/mydatabase
+        username: secret
+        password: myuser
+    docker:
+        compose:
+            lifecycle-management: start-and-stop
+    jpa:
+        show-sql: true
+        properties:
+            hibernate:
+                '[format_sql]': true

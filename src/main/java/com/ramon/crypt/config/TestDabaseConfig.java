@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import com.ramon.crypt.domain.dto.TransferDTO;
+import com.ramon.crypt.repositories.TransferRepository;
 import com.ramon.crypt.services.TransferService;
 
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,15 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TestDabaseConfig {
 
+    private final TransferRepository transferRepository;
     private final TransferService transferService;
 
     @Bean
     @SuppressWarnings("unused")
     ApplicationRunner seedDatabase() {
         return args -> {
+            if (transferRepository.count() > 0) return;
+
             List<TransferDTO> transfers = List.of(
                 new TransferDTO(null, "123.456.789-10", UUID.randomUUID().toString(), 5999L),
                 new TransferDTO(null, "123.456.789-10", UUID.randomUUID().toString(), 1000L),
