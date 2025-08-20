@@ -19,4 +19,4 @@ spring:
 crypt:
     secret:
         password: ${CRYPT_PASSWORD:mypassword}
-        salt: ${CRYPT_PASSWORD:mysalt}
+        salt: ${CRYPT_SALT:mysalt}
